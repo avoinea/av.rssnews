@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="av.rssnews">
+
+  <include package="plone.app.contentmenu" />
+
+  <browser:resourceDirectory
+    name="av.rssnews.css"
+    directory="css"
+    />
+
+</configure>
