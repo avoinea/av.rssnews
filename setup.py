@@ -9,35 +9,18 @@ from setuptools import setup, find_packages
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-version = '1.0'
-
-long_description = (
-    read('README.txt')
-    + '\n' +
-    'Change history\n'
-    '**************\n'
-    + '\n' +
-    read('CHANGES.txt')
-    + '\n' +
-    'Detailed Documentation\n'
-    '**********************\n'
-    + '\n' +
-    read('av', 'rssnews', 'README.txt')
-    + '\n' +
-    'Contributors\n'
-    '************\n'
-    + '\n' +
-    read('CONTRIBUTORS.txt')
-    + '\n' +
-    'Download\n'
-    '********\n')
+NAME = 'av.rssnews'
+PATH = NAME.split('.') + ['version.txt']
+VERSION = open(os.path.join(*PATH)).read().strip()
+DESCRIPTION = (open("README.txt").read() + "\n" +
+               open(os.path.join("docs", "HISTORY.txt")).read())
 
 tests_require = ['zope.testing']
 
-setup(name='av.rssnews',
-      version=version,
+setup(name=NAME,
+      version=VERSION,
       description="",
-      long_description=long_description,
+      long_description=DESCRIPTION,
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
