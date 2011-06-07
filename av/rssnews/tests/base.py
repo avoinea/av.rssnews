@@ -75,6 +75,8 @@ class FunctionalTestCase(ptc.FunctionalTestCase):
     """
 
     def afterSetUp(self):
+        """ Setup
+        """
         roles = ('Member', 'Contributor')
         self.portal.portal_membership.addMember('contributor',
                                                 'secret',

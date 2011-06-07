@@ -4,7 +4,8 @@
 PROJECTNAME = 'av.rssnews'
 
 ADD_PERMISSIONS = {
-    'RSSNewsItem': 'av.rssnews: Add RSS News Item'
+    'RSSNewsItem': 'av.rssnews: Add RSS News Item',
+    'RSSNews': 'av.rssnews: Add RSS News',
 }
 
 from zope.i18nmessageid import MessageFactory

@@ -1,3 +1,5 @@
+""" Doctests
+"""
 import unittest
 import doctest
 
@@ -10,6 +12,8 @@ from av.rssnews.tests import base
 
 
 def test_suite():
+    """ Suite
+    """
     return unittest.TestSuite([
 
         # Demonstrate the main content types

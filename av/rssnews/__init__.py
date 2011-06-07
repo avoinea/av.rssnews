@@ -17,7 +17,7 @@ def initialize(context):
     from av.rssnews import content
     content.initialize(context)
 
-    content_types, constructors, ftis = atapi.process_types(
+    content_types, constructors, _ftis = atapi.process_types(
         atapi.listTypes(config.PROJECTNAME),
         config.PROJECTNAME)
 

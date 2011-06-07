@@ -5,10 +5,6 @@ This module contains the tool of av.rssnews
 import os
 from setuptools import setup, find_packages
 
-
-def read(*rnames):
-    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
-
 NAME = 'av.rssnews'
 PATH = NAME.split('.') + ['version.txt']
 VERSION = open(os.path.join(*PATH)).read().strip()
@@ -39,6 +35,7 @@ setup(name=NAME,
       zip_safe=False,
       install_requires=['setuptools',
                         # -*- Extra requirements: -*-
+                        'Products.cron4plone',
                         ],
       tests_require=tests_require,
       extras_require=dict(tests=tests_require),

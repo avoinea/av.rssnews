@@ -1,20 +1,22 @@
 <?xml version="1.0"?>
-<object name="RSSNewsItem"
+<object name="RSSNews"
    meta_type="Factory-based Type Information with dynamic views"
    i18n:domain="plone" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">RSS News</property>
  <property name="description"
      i18n:translate="">An announcement that will show up in news listings.</property>
  <property name="icon_expr"></property>
- <property name="content_meta_type">RSSNewsItem</property>
+ <property name="content_meta_type">RSSNews</property>
  <property name="product">av.rssnews</property>
- <property name="factory">addRSSNewsItem</property>
- <property name="immediate_view">newsitem_view</property>
- <property name="global_allow">False</property>
+ <property name="factory">addRSSNews</property>
+ <property name="immediate_view">news_view</property>
+ <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>
- <property name="allowed_content_types"/>
+ <property name="allowed_content_types">
+  <element value="RSSNewsItem" />
+ </property>
  <property name="allow_discussion">False</property>
- <property name="default_view">newsitem_view</property>
+ <property name="default_view">news_view</property>
  <property name="view_methods">
   <element value="newsitem_view"/>
  </property>

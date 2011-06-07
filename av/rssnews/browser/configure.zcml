@@ -10,4 +10,11 @@
     directory="css"
     />
 
+  <browser:page
+    for="*"
+    name="update"
+    class=".app.update.Update"
+    permission="av.rssnews.update"
+    />
+
 </configure>
