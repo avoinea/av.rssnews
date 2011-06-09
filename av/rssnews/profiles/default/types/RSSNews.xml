@@ -9,16 +9,16 @@
  <property name="content_meta_type">RSSNews</property>
  <property name="product">av.rssnews</property>
  <property name="factory">addRSSNews</property>
- <property name="immediate_view">news_view</property>
+ <property name="immediate_view">folder_summary_view</property>
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
   <element value="RSSNewsItem" />
  </property>
  <property name="allow_discussion">False</property>
- <property name="default_view">news_view</property>
+ <property name="default_view">folder_summary_view</property>
  <property name="view_methods">
-  <element value="newsitem_view"/>
+  <element value="folder_summary_view"/>
  </property>
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="atct_edit"/>

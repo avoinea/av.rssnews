@@ -4,13 +4,14 @@ from zope.interface import implements
 from Products.ATContentTypes.content.base import registerATCT
 from av.rssnews.config import PROJECTNAME
 from av.rssnews.interfaces import IRSSNews
-from av.rssnews.content.core import RSSContent
+from av.rssnews.content.core import SCHEMA
+from Products.ATContentTypes.content.folder import ATFolder
 
-class RSSNews(RSSContent):
+class RSSNews(ATFolder):
     """ Add URL to News Item
     """
     implements(IRSSNews)
-    schema = RSSContent.schema.copy()
+    schema = ATFolder.schema.copy() + SCHEMA.copy()
     meta_type = portal_type = archetype_name = 'RSSNews'
 
 def register():

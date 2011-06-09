@@ -17,4 +17,11 @@
     permission="av.rssnews.update"
     />
 
+  <browser:page
+    for="av.rssnews.interfaces.IRSSNews"
+    name="imgview"
+    class="valentine.imagescales.browser.atfolder.ImageView"
+    permission="zope.Public"
+    allowed_interface="valentine.imagescales.browser.interfaces.IImageView" />
+
 </configure>

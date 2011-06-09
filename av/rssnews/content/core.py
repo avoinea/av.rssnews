@@ -11,7 +11,7 @@ from av.rssnews.config import RSS_MAXID
 
 
 
-SCHEMA = ATNewsItem.schema.copy() + Schema((
+SCHEMA = Schema((
     StringField(
         'url',
         schemata='default',
@@ -26,7 +26,7 @@ class RSSContent(ATNewsItem):
     """ RSS Content should subclass this
     """
     implements(IRSSContent)
-    schema = SCHEMA.copy()
+    schema = ATNewsItem.schema.copy() + SCHEMA.copy()
 
     def generateNewId(self):
         """ Customize new id
