@@ -14,6 +14,8 @@
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
   <element value="RSSNewsItem" />
+  <element value="Image" />
+  <element value="Link" />
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">folder_summary_view</property>

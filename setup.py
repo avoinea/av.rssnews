@@ -36,6 +36,7 @@ setup(name=NAME,
       install_requires=['setuptools',
                         # -*- Extra requirements: -*-
                         'Products.cron4plone',
+                        'valentine.imagescales',
                         ],
       tests_require=tests_require,
       extras_require=dict(tests=tests_require),

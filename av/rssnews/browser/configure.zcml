@@ -20,7 +20,7 @@
   <browser:page
     for="av.rssnews.interfaces.IRSSNews"
     name="imgview"
-    class="valentine.imagescales.browser.atfolder.ImageView"
+    class="valentine.imagescales.browser.atfolder.FolderImageView"
     permission="zope.Public"
     allowed_interface="valentine.imagescales.browser.interfaces.IImageView" />
 
