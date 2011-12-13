@@ -2,7 +2,7 @@
 <object name="RSSNewsItem"
    meta_type="Factory-based Type Information with dynamic views"
    i18n:domain="plone" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="title" i18n:translate="">RSS News</property>
+ <property name="title" i18n:translate="">RSS News Item</property>
  <property name="description"
      i18n:translate="">An announcement that will show up in news listings.</property>
  <property name="icon_expr"></property>
