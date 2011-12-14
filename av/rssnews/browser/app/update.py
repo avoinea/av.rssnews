@@ -106,7 +106,7 @@ class Update(BrowserView):
 
         description = BeautifulSoup(entry.get('summary', ''))
         description = ''.join([e for e in description.recursiveChildGenerator()
-                               if isinstance(e,unicode)]).strip()
+                               if isinstance(e, unicode)]).strip()
 
         # Descopera.ro
         index = description.find('Citeste tot articolul')
@@ -118,32 +118,30 @@ class Update(BrowserView):
 
         url = entry.get('link', '#').strip()
 
-        # News item already added, skip it
-        name = INameChooser(self.context).chooseName(title)
-        if name in self.context.objectIds():
-            return self.context._getOb(name)
-
-        # Add new item
-        name = self.context.invokeFactory('RSSNewsItem', name)
-        logger.info('Adding newsitem %s in %s',
-                    name, self.context.absolute_url(1))
-
         updated = entry.get('updated', None)
         if not updated:
-            updated = self.context.updated or datetime.now(bucharest)
+            updated = datetime.now(bucharest)
         else:
             updated = parseDatetimetz(updated)
 
-        print "======="
-        print name
-        print updated
+        # Add archive
+        archive = updated.strftime('%Y-%m-%d')
+        archive = self.add(self.context, 'Folder', archive)
+        self.publish(archive)
+
+        # News item already added, skip it
+        name = INameChooser(self.context).chooseName(title)
+        if name in archive.objectIds():
+            return archive._getOb(name)
+
+        # Add new item
+        newsitem = self.add(archive, 'RSSNewsItem', name)
 
         # Update news properties
-        newsitem = self.context._getOb(name)
         newsitem.getField('title').getMutator(newsitem)(title)
         newsitem.getField('description').getMutator(newsitem)(description)
         newsitem.getField('url').getMutator(newsitem)(url)
-        #newsitem.getField('effective').getMutator(newsitem)(updated)
+        newsitem.getField('effectiveDate').getMutator(newsitem)(updated)
         newsitem.getField('subject').getMutator(newsitem)([
             self.context.getId(),
         ])
@@ -151,17 +149,31 @@ class Update(BrowserView):
         self.add_image(newsitem, entry)
 
         # Publish
-        wftool = getToolByName(self.context, 'portal_workflow')
-        state = wftool.getInfoFor(newsitem, 'review_state', '(Unknown)')
-        if state != 'published':
-            try:
-                wftool.doActionFor(newsitem, 'publish', comment='')
-            except Exception, err:
-                logger.exception(err)
+        self.publish(newsitem)
 
         # Reindex
         newsitem.reindexObject()
         return newsitem
+
+    def add(self, context, factory, name):
+        """ Invoke factory
+        """
+        if not name in context.objectIds():
+            logger.info('Adding %s %s in %s', factory, name,
+                        context.absolute_url(1))
+            name = context.invokeFactory(factory, name)
+        return context._getOb(name)
+
+    def publish(self, doc):
+        """ Publish doc
+        """
+        wftool = getToolByName(self.context, 'portal_workflow')
+        state = wftool.getInfoFor(doc, 'review_state', '(Unknown)')
+        if state != 'published':
+            try:
+                wftool.doActionFor(doc, 'publish', comment='')
+            except Exception, err:
+                logger.exception(err)
 
     def __call__(self, **kwargs):
         """ Run updater
