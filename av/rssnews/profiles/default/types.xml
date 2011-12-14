@@ -4,4 +4,6 @@
     meta_type="Factory-based Type Information with dynamic views"/>
   <object name="RSSNews"
     meta_type="Factory-based Type Information with dynamic views"/>
+  <object name="RSSServer"
+    meta_type="Factory-based Type Information with dynamic views"/>
 </object>

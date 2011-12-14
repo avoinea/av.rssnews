@@ -14,6 +14,11 @@
       <role name="Owner"/>
       <role name="Editor"/>
     </permission>
+    <permission name="av.rssnews: Add RSS Server" acquire="True">
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="Editor"/>
+    </permission>
     <permission name="av.rssnews: Update" acquire="True">
       <role name="Manager"/>
       <role name="Owner"/>

@@ -3,5 +3,6 @@
   <factorytypes>
     <type portal_type="RSSNewsItem"/>
     <type portal_type="RSSNews"/>
+    <type portal_type="RSSServer"/>
   </factorytypes>
 </object>

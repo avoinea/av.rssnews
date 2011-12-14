@@ -7,9 +7,7 @@ from Products.Archetypes.atapi import StringWidget
 from Products.ATContentTypes.content.newsitem import ATNewsItem
 from av.rssnews.config import RSSNewsMessageFactory as _
 from av.rssnews.interfaces import IRSSContent
-from av.rssnews.config import RSS_MAXID
-
-
+from zope.app.container.interfaces import INameChooser
 
 SCHEMA = Schema((
     StringField(
@@ -31,8 +29,5 @@ class RSSContent(ATNewsItem):
     def generateNewId(self):
         """ Customize new id
         """
-        oid = super(RSSContent, self).generateNewId()
-        news_id = oid.split('-')
-        if len(news_id) <= (RSS_MAXID + (0.20 * RSS_MAXID)): # 20%
-            return oid
-        return '-'.join(news_id[:RSS_MAXID])
+        title = self.Title()
+        return INameChooser(self).chooseName(title)

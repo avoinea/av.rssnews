@@ -8,3 +8,6 @@ def initialize(context):
 
     from av.rssnews.content import news
     news.register()
+
+    from av.rssnews.content import server
+    server.register()

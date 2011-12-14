@@ -35,6 +35,7 @@ setup(name=NAME,
       zip_safe=False,
       install_requires=['setuptools',
                         # -*- Extra requirements: -*-
+                        'BeautifulSoup',
                         'Products.cron4plone',
                         'valentine.imagescales',
                         ],

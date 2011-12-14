@@ -11,14 +11,29 @@
     />
 
   <browser:page
-    for="*"
+    for="av.rssnews.interfaces.IRSSNews"
     name="update"
     class=".app.update.Update"
     permission="av.rssnews.update"
     />
 
   <browser:page
+    for="Products.ATContentTypes.interfaces.folder.IATBTreeFolder"
+    name="import.xml"
+    template="zpt/import.pt"
+    class=".app.import.Import"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:page
     for="av.rssnews.interfaces.IRSSNews"
+    name="imgview"
+    class="valentine.imagescales.browser.atfolder.FolderImageView"
+    permission="zope.Public"
+    allowed_interface="valentine.imagescales.browser.interfaces.IImageView" />
+
+  <browser:page
+    for="av.rssnews.interfaces.IRSSServer"
     name="imgview"
     class="valentine.imagescales.browser.atfolder.FolderImageView"
     permission="zope.Public"
