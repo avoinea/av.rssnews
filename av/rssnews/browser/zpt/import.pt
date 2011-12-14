@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:metal="http://xml.zope.org/namespaces/metal"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  metal:use-macro="context/main_template/macros/master"
+  i18n:domain="av">
+
+<body>
+  <metal:content-core fill-slot="content-core">
+    <metal:block define-macro="content-core">
+      <fieldset>
+        <legend>Import children structure from XML</legend>
+        <form action="@@import.xml"  method="post" enctype="multipart/form-data">
+          <div class="field">
+            <input type="file" name="xmlfile" id="xmlfile"/>
+          </div>
+          <div class="field">
+            <input type="submit" value="Import" name="import"/>
+          </div>
+        </form>
+      </fieldset>
+    </metal:block>
+  </metal:content-core>
+</body>
+</html>
