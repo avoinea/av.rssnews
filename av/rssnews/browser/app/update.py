@@ -108,6 +108,16 @@ class Update(BrowserView):
         description = ''.join([e for e in description.recursiveChildGenerator()
                                if isinstance(e, unicode)]).strip()
 
+        ptool = getToolByName(self.context, 'portal_properties')
+        sanitize = getattr(ptool, 'sanitize', None)
+        if sanitize:
+            title_sanitize = sanitize.getProperty('subject', [])
+            for expr in title_sanitize:
+                title = title.replace(expr, '')
+            desc_sanitize = sanitize.getProperty('body', [])
+            for expr in desc_sanitize:
+                description = description.replace(expr, '')
+
         # Descopera.ro
         index = description.find('Citeste tot articolul')
         if index != -1:
@@ -143,7 +153,7 @@ class Update(BrowserView):
         newsitem.getField('url').getMutator(newsitem)(url)
         newsitem.getField('effectiveDate').getMutator(newsitem)(updated)
         newsitem.getField('subject').getMutator(newsitem)([
-            self.context.getId(),
+            self.context.title_or_id(),
         ])
 
         self.add_image(newsitem, entry)
