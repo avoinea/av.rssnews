@@ -29,4 +29,7 @@
     name="AV Servers"
     />
 
+  <adapter factory=".catalog.sourceTitle" name="sourceTitle" />
+  <adapter factory=".catalog.sourcePath" name="sourcePath" />
+
 </configure>
