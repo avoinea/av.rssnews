@@ -8,13 +8,16 @@ import feedparser
 import time
 from datetime import datetime
 import transaction
-from zope.component import queryMultiAdapter
+from zope.component import queryMultiAdapter, getUtility
 from zope.app.container.interfaces import INameChooser
 from zope.datetime import parseDatetimetz
-from av.rssnews.config import bucharest
 from BeautifulSoup import BeautifulSoup
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
+
+from av.rssnews.config import bucharest
+from av.rssnews.utilities.interfaces import IText
+
 
 logger = logging.getLogger('av.rssnews')
 
@@ -104,7 +107,7 @@ class Update(BrowserView):
 
         description = BeautifulSoup(entry.get('summary', ''))
         description = ''.join([e for e in description.recursiveChildGenerator()
-                               if isinstance(e, unicode)]).strip()
+                        if isinstance(e, unicode)]).strip()
 
         ptool = getToolByName(self.context, 'portal_properties')
         sanitize = getattr(ptool, 'sanitize', None)
@@ -116,10 +119,10 @@ class Update(BrowserView):
             for expr in desc_sanitize:
                 description = description.replace(expr, '')
 
-        # Descopera.ro
-        index = description.find('Citeste tot articolul')
-        if index != -1:
-            description = description[:index]
+        body = description
+
+        utils = getUtility(IText)
+        description = utils.truncate(description, 20, 200)
 
         if not (title and description):
             return None
@@ -148,6 +151,7 @@ class Update(BrowserView):
         # Update news properties
         newsitem.getField('title').getMutator(newsitem)(title)
         newsitem.getField('description').getMutator(newsitem)(description)
+        newsitem.getField('text').getMutator(newsitem)(body)
         newsitem.getField('url').getMutator(newsitem)(url)
         newsitem.getField('effectiveDate').getMutator(newsitem)(updated)
         newsitem.getField('subject').getMutator(newsitem)([
@@ -167,8 +171,8 @@ class Update(BrowserView):
         """ Invoke factory
         """
         if not name in context.objectIds():
-            logger.info('Adding %s %s in %s', factory, name,
-                        context.absolute_url(1))
+            logger.info('Adding %s: %s/%s', factory,
+                        context.absolute_url(1), name)
             name = context.invokeFactory(factory, name)
         return context._getOb(name)
 
@@ -200,27 +204,16 @@ class Update(BrowserView):
 
         # No change
         if data.get('status', None) == 304:
-            return "No changes made until last update"
+            return "No changes made since last update"
 
         etag = data.get('etag', None)
         if etag and efield:
             efield.getMutator(self.context)(etag)
 
-        #last_updated = data.get('modified', None)
-        #if isinstance(last_updated,
-                      #time.struct_time) and len(last_updated) >= 6:
-            #args = last_updated[:6] + (0, utc)
-            #self.context.updated = datetime(*args)
-        #else:
-            #self.context.updated = datetime.now(bucharest)
-
         for entry in data.get('entries', ()):
             self.add_newsitem(entry)
 
-        return '%s\t%s\tUPDATED' % (
-            datetime.now(bucharest).strftime('%d-%m-%Y %H:%M'),
-            self.context.absolute_url(1)
-        )
+        return '%s - UPDATED' % self.context.absolute_url(1)
 
 class PortalUpdate(BrowserView):
     """ Call all updaters

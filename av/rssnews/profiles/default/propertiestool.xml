@@ -7,6 +7,7 @@
   </property>
   <property name="body" type="lines">
    <element value="citeste stirea completa pe a1.ro"/>
+   <element value="Citeste tot articolul"/>
   </property>
  </object>
 </object>
