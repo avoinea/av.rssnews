@@ -5,7 +5,10 @@ import re
 import logging
 import urllib2
 import feedparser
+import time
 from datetime import datetime
+import transaction
+from zope.component import queryMultiAdapter
 from zope.app.container.interfaces import INameChooser
 from zope.datetime import parseDatetimetz
 from av.rssnews.config import bucharest
@@ -38,9 +41,6 @@ class Update(BrowserView):
                 logger.exception(err)
                 continue
             if data:
-                logger.info('Add image %s in %s',
-                             enc_id, container.absolute_url(1))
-
                 container.getField('image').getMutator(container)(data)
             return container
         return None
@@ -75,8 +75,6 @@ class Update(BrowserView):
             return None
         data = conn.read()
         if data:
-            logger.info('Add image %s in %s',
-                         image_id, container.absolute_url(1))
             container.getField('image').getMutator(container)(data)
             return container
         return None
@@ -183,7 +181,7 @@ class Update(BrowserView):
             try:
                 wftool.doActionFor(doc, 'publish', comment='')
             except Exception, err:
-                logger.exception(err)
+                logger.debug(err)
 
     def __call__(self, **kwargs):
         """ Run updater
@@ -223,3 +221,29 @@ class Update(BrowserView):
             datetime.now(bucharest).strftime('%d-%m-%Y %H:%M'),
             self.context.absolute_url(1)
         )
+
+class PortalUpdate(BrowserView):
+    """ Call all updaters
+    """
+    def __call__(self, **kwargs):
+        ctool = getToolByName(self.context, 'portal_catalog')
+        brains = ctool(object_provides='av.rssnews.interfaces.IRSSNews')
+
+        start = time.time()
+        logger.info('Updating %s news sources...', len(brains))
+        for brain in brains:
+            doc = brain.getObject()
+            updater = queryMultiAdapter((doc, self.request), name=u'update')
+            if not updater:
+                continue
+
+            try:
+                res = updater()
+            except Exception, err:
+                logger.exception(err)
+                continue
+            else:
+                logger.info(res)
+                transaction.savepoint(optimistic=True)
+
+        logger.info('Update complete in %s seconds !', time.time() - start)

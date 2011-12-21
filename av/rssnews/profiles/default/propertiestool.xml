@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<object name="portal_properties">
+ <object name="sanitize" meta_type="Plone Property Sheet">
+  <property name="title">Sanitize Title and Description</property>
+  <property name="subject" type="lines">
+   <element value="VIDEO!"/>
+  </property>
+  <property name="body" type="lines">
+   <element value="citeste stirea completa pe a1.ro"/>
+  </property>
+ </object>
+</object>

@@ -11,6 +11,13 @@
     />
 
   <browser:page
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    name="update"
+    class=".app.update.PortalUpdate"
+    permission="av.rssnews.update"
+    />
+
+  <browser:page
     for="av.rssnews.interfaces.IRSSNews"
     name="update"
     class=".app.update.Update"
