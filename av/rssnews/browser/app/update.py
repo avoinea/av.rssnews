@@ -23,6 +23,9 @@ logger = logging.getLogger('av.rssnews')
 
 class Update(BrowserView):
     """ News updater """
+    def __init__(self, context, request):
+        super(Update, self).__init__(context, request)
+        self.exists = set()
 
     def add_image_from_enclosures(self, container, enclosures):
         """ Add image from enclosures
@@ -142,6 +145,12 @@ class Update(BrowserView):
 
         # News item already added, skip it
         name = INameChooser(self.context).chooseName(title)
+
+        # Skip duplicate
+        if name in self.exists:
+            return None
+
+        self.exists.add(name)
         if name in archive.objectIds():
             return archive._getOb(name)
 

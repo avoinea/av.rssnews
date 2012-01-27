@@ -81,7 +81,7 @@ class Text(object):
         orphans = int(0.1 * length) # 10%
         trunk = self.truncate_length(text, length, orphans, '')
 
-        orphans + int(0.1 * words) # 10%
+        orphans = int(0.1 * words) # 10%
         trunk = self.truncate_words(trunk, words, orphans, '')
 
         if trunk == text:
