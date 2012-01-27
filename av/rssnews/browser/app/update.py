@@ -39,7 +39,7 @@ class Update(BrowserView):
                 continue
 
             enc_href = enc_href.split('?')[0]
-            enc_id = enc_href.split('/')[-1]
+            #enc_id = enc_href.split('/')[-1]
             try:
                 conn = urllib2.urlopen(enc_href)
                 data = conn.read()
@@ -61,8 +61,8 @@ class Update(BrowserView):
             return None
         image_link = found.group('imagelink')
         image_link = image_link.split('?')[0]
-        image_path = image_link.split('/')
-        image_id = image_path[-1] or image_path[-2]
+        #image_path = image_link.split('/')
+        #image_id = image_path[-1] or image_path[-2]
 
         # Adds
         if image_link.startswith('http://core.ad20.net'):
@@ -199,6 +199,7 @@ class Update(BrowserView):
     def __call__(self, **kwargs):
         """ Run updater
         """
+        self.exists = kwargs.get('exists', set())
         ufield = self.context.getField('url')
         if not ufield:
             return
@@ -227,6 +228,10 @@ class Update(BrowserView):
 class PortalUpdate(BrowserView):
     """ Call all updaters
     """
+    def __init__(self, context, request):
+        super(PortalUpdate, self).__init__(context, request)
+        self.exists = set()
+
     def __call__(self, **kwargs):
         ctool = getToolByName(self.context, 'portal_catalog')
         brains = ctool(object_provides='av.rssnews.interfaces.IRSSNews')
@@ -240,7 +245,7 @@ class PortalUpdate(BrowserView):
                 continue
 
             try:
-                res = updater()
+                res = updater(exists=self.exists)
             except Exception, err:
                 logger.exception(err)
                 continue
