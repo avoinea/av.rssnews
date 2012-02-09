@@ -8,13 +8,15 @@ import feedparser
 import time
 from datetime import datetime
 import transaction
+
+from StringIO import StringIO
+from PIL import Image as PILImage
 from zope.component import queryMultiAdapter, getUtility
 from zope.app.container.interfaces import INameChooser
 from zope.datetime import parseDatetimetz
 from BeautifulSoup import BeautifulSoup
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
-
 from av.rssnews.config import bucharest
 from av.rssnews.utilities.interfaces import IText
 
@@ -26,6 +28,26 @@ class Update(BrowserView):
     def __init__(self, context, request):
         super(Update, self).__init__(context, request)
         self.exists = set()
+
+    def get_aspect_ratio(self, img, width=400, height=300):
+        """ Return proportional dimensions within desired size """
+        sw = float(width) / img.size[0]
+        sh = float(height) / img.size[1]
+        if sw <= sh:
+            height = int(sw * img.size[1] + 0.5)
+        else:
+            width = int(sh * img.size[0] + 0.5)
+        return width, height
+
+    def resize(self, img):
+        """ Resize image
+        """
+        width, height = self.get_aspect_ratio(img)
+        try:
+            img = img.resize((width, height), PILImage.ANTIALIAS)
+        except AttributeError:
+            img = img.resize((width, height))
+        return img
 
     def add_image_from_enclosures(self, container, enclosures):
         """ Add image from enclosures
@@ -47,7 +69,13 @@ class Update(BrowserView):
                 logger.exception(err)
                 continue
             if data:
-                container.getField('image').getMutator(container)(data)
+                newimg = StringIO()
+                img = PILImage.open(StringIO(data))
+                fmt = img.format
+                img = self.resize(img)
+                img.save(newimg, fmt, quality=85)
+                newimg.seek(0)
+                container.getField('image').getMutator(container)(newimg.read())
             return container
         return None
 
@@ -81,7 +109,13 @@ class Update(BrowserView):
             return None
         data = conn.read()
         if data:
-            container.getField('image').getMutator(container)(data)
+            newimg = StringIO()
+            img = PILImage.open(StringIO(data))
+            fmt = img.format
+            img = self.resize(img)
+            img.save(newimg, fmt, quality=85)
+            newimg.seek(0)
+            container.getField('image').getMutator(container)(newimg.read())
             return container
         return None
 
