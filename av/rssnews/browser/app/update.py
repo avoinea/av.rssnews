@@ -11,12 +11,15 @@ import transaction
 
 from StringIO import StringIO
 from PIL import Image as PILImage
+from zope.interface import alsoProvides
 from zope.component import queryMultiAdapter, getUtility
 from zope.app.container.interfaces import INameChooser
 from zope.datetime import parseDatetimetz
 from BeautifulSoup import BeautifulSoup
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces.breadcrumbs import IHideFromBreadcrumbs
+
 from av.rssnews.config import bucharest
 from av.rssnews.utilities.interfaces import IText
 
@@ -47,6 +50,9 @@ class Update(BrowserView):
             img = img.resize((width, height), PILImage.ANTIALIAS)
         except AttributeError:
             img = img.resize((width, height))
+        except Exception, err:
+            logger.exception(err)
+            return None
         return img
 
     def add_image_from_enclosures(self, container, enclosures):
@@ -69,13 +75,15 @@ class Update(BrowserView):
                 logger.exception(err)
                 continue
             if data:
-                newimg = StringIO()
                 img = PILImage.open(StringIO(data))
                 fmt = img.format
                 img = self.resize(img)
-                img.save(newimg, fmt, quality=85)
-                newimg.seek(0)
-                container.getField('image').getMutator(container)(newimg.read())
+                if img:
+                    newimg = StringIO()
+                    img.save(newimg, fmt, quality=85)
+                    newimg.seek(0)
+                    data = newimg.read()
+                container.getField('image').getMutator(container)(data)
             return container
         return None
 
@@ -109,13 +117,15 @@ class Update(BrowserView):
             return None
         data = conn.read()
         if data:
-            newimg = StringIO()
             img = PILImage.open(StringIO(data))
             fmt = img.format
             img = self.resize(img)
-            img.save(newimg, fmt, quality=85)
-            newimg.seek(0)
-            container.getField('image').getMutator(container)(newimg.read())
+            if img:
+                newimg = StringIO()
+                img.save(newimg, fmt, quality=85)
+                newimg.seek(0)
+                data = newimg.read()
+            container.getField('image').getMutator(container)(data)
             return container
         return None
 
@@ -175,6 +185,9 @@ class Update(BrowserView):
         # Add archive
         archive = updated.strftime('%Y-%m-%d')
         archive = self.add(self.context, 'Folder', archive)
+        alsoProvides(archive, IHideFromBreadcrumbs)
+        if not IHideFromBreadcrumbs.providedBy(self.context):
+            alsoProvides(self.context, IHideFromBreadcrumbs)
         self.publish(archive)
 
         # News item already added, skip it
