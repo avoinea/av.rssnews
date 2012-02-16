@@ -316,7 +316,7 @@ class PortalCleanup(BrowserView):
         except Exception, err:
             logger.exception(err)
             days = 15
-        days = min(days, 7)
+        days = max(days, 7)
 
         ctool = getToolByName(self.context, 'portal_catalog')
         brains = ctool(
