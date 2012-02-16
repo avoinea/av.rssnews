@@ -6,9 +6,10 @@ import logging
 import urllib2
 import feedparser
 import time
+import transaction
 from datetime import datetime
 import transaction
-
+from DateTime import DateTime
 from StringIO import StringIO
 from PIL import Image as PILImage
 from zope.interface import alsoProvides
@@ -19,7 +20,7 @@ from BeautifulSoup import BeautifulSoup
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces.breadcrumbs import IHideFromBreadcrumbs
-
+from Products.CMFPlone.utils import parent
 from av.rssnews.config import bucharest
 from av.rssnews.utilities.interfaces import IText
 
@@ -301,3 +302,40 @@ class PortalUpdate(BrowserView):
                 transaction.savepoint(optimistic=True)
 
         logger.info('Update complete in %s seconds !', time.time() - start)
+
+class PortalCleanup(BrowserView):
+    """ Cleanup old news
+    """
+    def __call__(self, **kwargs):
+        if getattr(self.request, 'form', {}):
+            kwargs.update(self.request.form)
+
+        days = kwargs.get('days', 15)
+        try:
+            days = int(days)
+        except Exception, err:
+            logger.exception(err)
+            days = 15
+        days = min(days, 7)
+
+        ctool = getToolByName(self.context, 'portal_catalog')
+        brains = ctool(
+            effective={'query': DateTime() - days, 'range': 'max'},
+            object_provides='av.rssnews.interfaces.IRSSNewsItem')
+
+        total = len(brains)
+        logger.info('Deleting old news: 0/%s', total)
+        for index, brain in enumerate(brains):
+            try:
+                obj = brain.getObject()
+                obj_parent = parent(obj)
+                obj_parent.manage_delObjects([brain.getId])
+            except Exception, err:
+                logger.exception(err)
+                continue
+            else:
+                if (index+1) % 500 == 0:
+                    logger.info('Deleting old news: %s/%s', index+1, total)
+                    transaction.commit()
+        logger.info('Deleting old news: %s/%s', total, total)
+        return 'Deleted %s old news.' % total
