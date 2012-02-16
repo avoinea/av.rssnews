@@ -8,6 +8,7 @@ import feedparser
 import time
 import transaction
 from datetime import datetime
+from datetime import timedelta
 import transaction
 from DateTime import DateTime
 from StringIO import StringIO
@@ -182,6 +183,13 @@ class Update(BrowserView):
             updated = datetime.now(bucharest)
         else:
             updated = parseDatetimetz(updated)
+
+            # Skip news older than 30 days
+            try:
+                if updated < (datetime.now() - timedelta(30)):
+                    return None
+            except Exception, err:
+                logger.exception(err)
 
         # Add archive
         archive = updated.strftime('%Y-%m-%d')
