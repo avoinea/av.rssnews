@@ -188,6 +188,9 @@ class Update(BrowserView):
             try:
                 if updated < (datetime.now() - timedelta(30)):
                     return None
+            except TypeError:
+                if updated < (datetime.now(bucharest) - timedelta(30)):
+                    return None
             except Exception, err:
                 logger.exception(err)
 
