@@ -1,6 +1,7 @@
 """ Text utility
 """
 import re
+import difflib
 from zope.interface import implements
 from interfaces import IText
 from keywords import NON_WORDS
@@ -33,7 +34,7 @@ class Text(object):
     """
     implements(IText)
 
-    def translate(self, text, language=ROMANIAN):
+    def translate(self, text, language=ROMANIAN.copy()):
         """ Translate text to ascii using language mapping
         """
         if not isinstance(text, unicode):
@@ -89,23 +90,26 @@ class Text(object):
 
         return trunk + suffix
 
-    def keywords(self, text, alt='', limit=10):
+    def keywords(self, title, description, limit=10):
         """ Return keywords in text
         """
-        safe = re.compile(r'[^a-z0-9\-\s]')
+        safe = re.compile(r'[^A-Za-z\-\s]')
 
-        text = text.lower()
-        text = safe.sub('', text)
+        title = self.translate(title)
+        title = safe.sub('', title)
+        title = set(x for x in title.split()
+                    if x.lower() not in NON_WORDS)
 
-        text = set(text.split())
-        text = text.difference(NON_WORDS)
-        if alt:
-            alt = alt.lower()
-            alt = safe.sub('', alt)
-            alt = set(alt.split())
-            alt = alt.difference(NON_WORDS)
+        description = self.translate(description)
+        description = safe.sub('', description)
+        description = set(x for x in description.split()
+                          if x.lower() not in NON_WORDS)
 
-            alt = text.intersection(alt)
-            text = alt or text
+        keywords = set()
+        for word in title:
+            matches = difflib.get_close_matches(word, description)
+            if matches:
+                keywords.add(word)
+                keywords.update(matches)
 
-        return list(text)[:limit]
+        return keywords
