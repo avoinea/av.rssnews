@@ -37,7 +37,7 @@ setup(name=NAME,
                         # -*- Extra requirements: -*-
                         'BeautifulSoup',
                         'Products.cron4plone',
-                        'valentine.imagescales',
+                        'eea.depiction',
                         ],
       tests_require=tests_require,
       extras_require=dict(tests=tests_require),

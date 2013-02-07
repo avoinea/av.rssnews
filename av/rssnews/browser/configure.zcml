@@ -42,15 +42,15 @@
   <browser:page
     for="av.rssnews.interfaces.IRSSNews"
     name="imgview"
-    class="valentine.imagescales.browser.atfolder.FolderImageView"
+    class="eea.depiction.browser.atfolder.FolderImageView"
     permission="zope.Public"
-    allowed_interface="valentine.imagescales.browser.interfaces.IImageView" />
+    allowed_interface="eea.depiction.browser.interfaces.IImageView" />
 
   <browser:page
     for="av.rssnews.interfaces.IRSSServer"
     name="imgview"
-    class="valentine.imagescales.browser.atfolder.FolderImageView"
+    class="eea.depiction.browser.atfolder.FolderImageView"
     permission="zope.Public"
-    allowed_interface="valentine.imagescales.browser.interfaces.IImageView" />
+    allowed_interface="eea.depiction.browser.interfaces.IImageView" />
 
 </configure>
