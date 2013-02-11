@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"><tal:vars define="query nocall:context/@@faceted_query">
+  <url tal:repeat="brain python:query.query(batch=False)"><tal:item define="url python:brain.getURL()">
+    <loc tal:content="python:url" />
+    <lastmod tal:content="python:brain.modified.ISO8601()" />
+    <changefreq>weekly</changefreq>
+    <image:image>
+      <image:loc tal:content="string:$url/image_preview" />
+    </image:image></tal:item>
+  </url></tal:vars>
+</urlset>
