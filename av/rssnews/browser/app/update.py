@@ -182,7 +182,12 @@ class Update(BrowserView):
         if not updated:
             updated = datetime.now(bucharest)
         else:
-            updated = parseDatetimetz(updated)
+            try:
+                updated = parseDatetimetz(updated)
+            except SyntaxError:
+                updated = parseDatetimetz(updated.replace(' ', 'T', 1))
+            except:
+                updated = datetime.now(bucharest)
 
             # Skip news older than 30 days
             try:
