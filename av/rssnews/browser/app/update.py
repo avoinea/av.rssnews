@@ -78,6 +78,13 @@ class Update(BrowserView):
                 continue
             if data:
                 img = PILImage.open(StringIO(data))
+                # Skip low resolution images
+                try:
+                    if (img.size[0] < 350 or img.size[1] < 250):
+                        return None
+                except Exception, err:
+                    logger.exception(err)
+
                 fmt = img.format
                 img = self.resize(img)
                 if img:
@@ -120,6 +127,14 @@ class Update(BrowserView):
         data = conn.read()
         if data:
             img = PILImage.open(StringIO(data))
+
+            # Skip low resolution images
+            try:
+                if (img.size[0] < 350 or img.size[1] < 250):
+                    return None
+            except Exception, err:
+                logger.exception(err)
+
             fmt = img.format
             img = self.resize(img)
             if img:
