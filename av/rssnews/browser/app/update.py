@@ -341,12 +341,12 @@ class PortalCleanup(BrowserView):
         if getattr(self.request, 'form', {}):
             kwargs.update(self.request.form)
 
-        days = kwargs.get('days', 60)
+        days = kwargs.get('days', 30)
         try:
             days = int(days)
         except Exception, err:
             logger.exception(err)
-            days = 60
+            days = 30
         days = max(days, 30)
 
         ctool = getToolByName(self.context, 'portal_catalog')
