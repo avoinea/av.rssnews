@@ -32,5 +32,7 @@
 
   <adapter factory=".catalog.sourceTitle" name="sourceTitle" />
   <adapter factory=".catalog.sourcePath" name="sourcePath" />
+  <adapter factory=".catalog.sourceUrl" name="sourceUrl" />
+  <adapter factory=".catalog.hasImage" name="hasImage" />
 
 </configure>

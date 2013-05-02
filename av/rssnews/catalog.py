@@ -1,6 +1,5 @@
 """ Catalog indexes
 """
-from zope.interface import Interface
 from plone.indexer.decorator import indexer
 from av.rssnews.interfaces import IRSSNewsItem, IRSSServer
 from Products.CMFPlone.utils import parent
@@ -13,7 +12,7 @@ def sourceTitle(obj, **kwargs):
 
     found = False
     myparent = parent(obj)
-    for back in range(0, 5):
+    for _back in range(0, 5):
         if IRSSServer.providedBy(myparent):
             found = True
             break
@@ -32,7 +31,7 @@ def sourcePath(obj, **kwargs):
 
     found = False
     myparent = parent(obj)
-    for back in range(0, 5):
+    for _back in range(0, 5):
         if IRSSServer.providedBy(myparent):
             found = True
             break
@@ -42,3 +41,31 @@ def sourcePath(obj, **kwargs):
         raise AttributeError
 
     return myparent.getPhysicalPath()
+
+@indexer(IRSSNewsItem)
+def sourceUrl(obj, **kwargs):
+    """ Index source url
+    """
+    if not IRSSNewsItem.providedBy(obj):
+        raise AttributeError
+
+    try:
+        url = obj.getField('url').getAccessor(obj)()
+    except Exception:
+        raise AttributeError
+    else:
+        return url
+
+@indexer(IRSSNewsItem)
+def hasImage(obj, **kwargs):
+    """ Get image url
+    """
+    if not IRSSNewsItem.providedBy(obj):
+        raise AttributeError
+
+    try:
+        image = obj.getField('image').getAccessor(obj)()
+    except Exception:
+        raise AttributeError
+    else:
+        return True if image else False

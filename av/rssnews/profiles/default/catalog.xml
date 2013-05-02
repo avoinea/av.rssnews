@@ -6,6 +6,14 @@
  <index name="sourceTitle" meta_type="FieldIndex">
   <indexed_attr value="sourceTitle"/>
  </index>
+ <index name="sourceUrl" meta_type="FieldIndex">
+  <indexed_attr value="sourceUrl"/>
+ </index>
+ <index name="hasImage" meta_type="BooleanIndex">
+  <indexed_attr value="hasImage"/>
+ </index>
  <column value="sourcePath" />
  <column value="sourceTitle" />
+ <column value="sourceUrl" />
+ <column value="hasImage" />
 </object>
