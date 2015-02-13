@@ -4,7 +4,7 @@
   i18n_domain="av.rssnews">
 
   <adapter
-    provides="zope.app.container.interfaces.INameChooser"
+    provides="zope.container.interfaces.INameChooser"
     for="..interfaces.IRSSContent"
     factory=".namechooser.NameChooser"
     />

@@ -3,8 +3,8 @@
 import re
 from zope.interface import implements
 
-from zope.app.container.interfaces import INameChooser
-from zope.app.container.contained import NameChooser as ContainedNameChooser
+from zope.container.interfaces import INameChooser
+from zope.container.contained import NameChooser as ContainedNameChooser
 from av.rssnews.config import RSS_MAXID
 
 romanian = {

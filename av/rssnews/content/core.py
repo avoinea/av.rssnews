@@ -7,7 +7,7 @@ from Products.Archetypes.atapi import StringWidget
 from Products.ATContentTypes.content.newsitem import ATNewsItem
 from av.rssnews.config import RSSNewsMessageFactory as _
 from av.rssnews.interfaces import IRSSContent
-from zope.app.container.interfaces import INameChooser
+from zope.container.interfaces import INameChooser
 
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Archetypes.atapi import AnnotationStorage

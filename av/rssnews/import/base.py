@@ -5,7 +5,7 @@ import logging
 from zope.interface import implements
 from zope.component import queryMultiAdapter
 from av.rssnews.interfaces import IImport
-from elementtree.ElementTree import XMLTreeBuilder, ElementTree
+from xml.etree.ElementTree import ElementTree, XMLTreeBuilder
 from Products.CMFCore.utils import getToolByName
 logger = logging.getLogger('av.rssnews')
 
