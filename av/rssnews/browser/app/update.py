@@ -14,7 +14,7 @@ from StringIO import StringIO
 from PIL import Image as PILImage
 from zope.interface import alsoProvides
 from zope.component import queryMultiAdapter, getUtility
-from zope.app.container.interfaces import INameChooser
+from zope.container.interfaces import INameChooser
 from zope.datetime import parseDatetimetz
 from BeautifulSoup import BeautifulSoup
 from Products.Five.browser import BrowserView
