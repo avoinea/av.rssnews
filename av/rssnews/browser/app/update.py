@@ -6,7 +6,6 @@ import logging
 import urllib2
 import feedparser
 import time
-import transaction
 from datetime import datetime
 from datetime import timedelta
 import transaction
@@ -119,6 +118,11 @@ class Update(BrowserView):
                 'thumb_size3.jpg', 'thumb_size1.jpg')
         if image_link.endswith('size3.jpg'):
             image_link = image_link.replace('size3.jpg', 'size1.jpg')
+
+        # doctorulzilei
+        if image_link.endswith('-170x100.jpg'):
+            image_link = image_link.replace('-170x100.jpg', '.jpg')
+
         try:
             conn = urllib2.urlopen(image_link)
         except urllib2.HTTPError, err:
@@ -205,14 +209,16 @@ class Update(BrowserView):
                 updated = datetime.now(bucharest)
 
             # Skip news older than 30 days
-            try:
-                if updated < (datetime.now() - timedelta(30)):
-                    return None
-            except TypeError:
-                if updated < (datetime.now(bucharest) - timedelta(30)):
-                    return None
-            except Exception, err:
-                logger.exception(err)
+            plone_ro = 'plone.ro' in url
+            if not plone_ro:
+                try:
+                    if updated < (datetime.now() - timedelta(10)):
+                        return None
+                except TypeError:
+                    if updated < (datetime.now(bucharest) - timedelta(10)):
+                        return None
+                except Exception, err:
+                    logger.exception(err)
 
         # Add archive
         archive = updated.strftime('%Y-%m-%d')
@@ -242,9 +248,13 @@ class Update(BrowserView):
         newsitem.getField('text').getMutator(newsitem)(body)
         newsitem.getField('url').getMutator(newsitem)(url)
         newsitem.getField('effectiveDate').getMutator(newsitem)(updated)
-        newsitem.getField('subject').getMutator(newsitem)([
-            self.context.title_or_id(),
-        ])
+        subject = [self.context.title_or_id()]
+        try:
+            if u'black friday' in title.lower() or u'black friday' in description.lower():
+                subject.append('Black Friday')
+        except Exception, err:
+            logger.exception(err)
+        newsitem.getField('subject').getMutator(newsitem)(subject)
 
         self.add_image(newsitem, entry)
 
@@ -341,19 +351,20 @@ class PortalCleanup(BrowserView):
         if getattr(self.request, 'form', {}):
             kwargs.update(self.request.form)
 
-        days = kwargs.get('days', 30)
+        days = kwargs.get('days', 10)
         try:
             days = int(days)
         except Exception, err:
             logger.exception(err)
-            days = 30
-        days = max(days, 30)
+            days = 10
+        days = max(days, 10)
 
         ctool = getToolByName(self.context, 'portal_catalog')
         brains = ctool(
             effective={'query': DateTime() - days, 'range': 'max'},
             object_provides='av.rssnews.interfaces.IRSSNewsItem')
 
+        index = 0
         total = len(brains)
         logger.info('Deleting old news: 0/%s', total)
         for index, brain in enumerate(brains):
@@ -368,5 +379,31 @@ class PortalCleanup(BrowserView):
                 if (index+1) % 500 == 0:
                     logger.info('Deleting old news: %s/%s', index+1, total)
                     transaction.commit()
+
         logger.info('Deleting old news: %s/%s', total, total)
-        return 'Deleted %s old news.' % total
+        transaction.commit()
+
+        brains = ctool(portal_type='Folder')
+        total = len(brains)
+        logger.info('Deleting empty folders: 0/%s', total)
+        for index, brain in enumerate(brains):
+            try:
+                name = brain.getId
+                obj = brain.getObject()
+                if obj.objectIds():
+                    continue
+                # 2013-01-01 - Avoid deletion of empty faceted folders
+                elif not name.startswith('201'):
+                    continue
+                obj_parent = parent(obj)
+                obj_parent.manage_delObjects([name])
+            except Exception, err:
+                logger.exception(err)
+                continue
+            else:
+                if (index+1) % 500 == 0:
+                    logger.info('Deleting empty folders %s/%s', index+1, total)
+                    transaction.commit()
+        logger.info('Deleting empty folders: %s/%s', index, total)
+
+        return 'Deleted old news and empty folders'
