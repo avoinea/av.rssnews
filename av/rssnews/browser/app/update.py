@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ Update cron
 """
 #import time
@@ -241,6 +242,16 @@ class Update(BrowserView):
 
         # Add new item
         newsitem = self.add(archive, 'RSSNewsItem', name)
+        subject = [self.context.title_or_id()]
+        try:
+            if u'black friday' in title.lower() or u'black friday' in description.lower():
+                subject.append('Black Friday')
+        except Exception, err:
+            logger.exception(err)
+        if isinstance(title, str):
+            title = title.decode('utf-8')
+        if 'Pamflet' in subject:
+            title = u"Crede şi NU Cerceta! ☺ {title}".format(title=title)
 
         # Update news properties
         newsitem.getField('title').getMutator(newsitem)(title)
@@ -248,12 +259,6 @@ class Update(BrowserView):
         newsitem.getField('text').getMutator(newsitem)(body)
         newsitem.getField('url').getMutator(newsitem)(url)
         newsitem.getField('effectiveDate').getMutator(newsitem)(updated)
-        subject = [self.context.title_or_id()]
-        try:
-            if u'black friday' in title.lower() or u'black friday' in description.lower():
-                subject.append('Black Friday')
-        except Exception, err:
-            logger.exception(err)
         newsitem.getField('subject').getMutator(newsitem)(subject)
 
         self.add_image(newsitem, entry)
